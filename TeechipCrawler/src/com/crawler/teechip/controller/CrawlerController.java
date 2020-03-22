@@ -48,56 +48,11 @@ public class CrawlerController {
         System.out.println(frame.getLogPrinter());
     }
 
-    public void crawl(String url) {
+    public void crawl(String crawlUrl, String consumerKey, String consumerSecret, String myUrl) {
         try {
-            System.out.println(url);
-            List<Item> items = CrawlerModel.Instance.crawlOneCategory(url);
-            pushToServerV2(items);
+            
         } catch (Exception ex) {
             Logger.getLogger(CrawlerController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void pushToServer(Item item) throws JSONException, IOException {
-        HttpPost httpPost = new HttpPost("http://localhost/duydl/index.php/wp-json/wc/v3/products");
-        httpPost.addHeader("content-type", "application/json");
-
-        String encoding = Base64.getEncoder()
-                .encodeToString("ck_6c31e47de04da961391e80048077d86d9288c4b2:cs_c89f2085df2f1acbb3d87f7e8f9b7495791d3cbd".getBytes());
-        httpPost.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
-        httpPost.setEntity(new StringEntity(item.toJSON()));
-        HttpResponse response = client.execute(httpPost);
-        httpPost.completed();
-        String result = HttpUtils.parseResultFromResponseHttpClient(response);
-        System.out.println(result);
-    }
-
-    public void pushToServerV2(List<Item> items) throws JSONException {
-        OAuthConfig config = new OAuthConfig("http://localhost/duydl/index.php",
-                "ck_6c31e47de04da961391e80048077d86d9288c4b2",
-                "cs_c89f2085df2f1acbb3d87f7e8f9b7495791d3cbd");
-        WooCommerce wooCommerce = new WooCommerceAPI(config, ApiVersionType.V3);
-
-        // Prepare object for request
-        int count = 0;
-        for (Item item : items) {
-            System.out.println(++count);
-            Map<String, Object> productInfo = new HashMap<>();
-            productInfo.put("name", item.getProduct());
-            productInfo.put("type", "simple");
-            productInfo.put("regular_price", String.valueOf(item.getSizes().get(0).getPrice()));
-            productInfo.put("description", "Testtest");
-            JSONArray arr = new JSONArray();
-            JSONObject json = new JSONObject();
-            json.put("id", 6);
-            json.put("position", 0);
-            json.put("option", new String[]{"Black", "Green"});
-            productInfo.put("attributes", arr.toString());
-
-            // Make request and retrieve result
-            Map product = wooCommerce.create(EndpointBaseType.PRODUCTS.getValue(), productInfo);
-            break;
-        }
-
     }
 }

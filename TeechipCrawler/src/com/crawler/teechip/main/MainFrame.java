@@ -151,8 +151,12 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_txtMyUrlActionPerformed
 
     public void crawl() {
-        String url = txtCategoryUrl.getText();
-        controller.crawl(url);
+        String crawlUrl = txtCategoryUrl.getText();
+        String ck = txtCk.getText();
+        String cs = txtCs.getText();
+        String myUrl = txtMyUrl.getText();
+        
+        controller.crawl(crawlUrl, ck, cs, myUrl);
     }
 
     /**
