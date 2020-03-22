@@ -27,5 +27,6 @@ public class LogPrinter implements Callback{
     public void printLog(String message){
         txtLog.append(message);
         txtLog.append("\n");
+        txtLog.update(txtLog.getGraphics());
     }
 }

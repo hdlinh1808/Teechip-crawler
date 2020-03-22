@@ -265,6 +265,7 @@ public class CrawlerModel {
             String url = String.format(urlFormat, JSoupUtils.MAIN_URL, groupId, path,
                     ++count, LIMIT);
 //            LogPrinterManager.Instance.printInMainFrameLogArea(url);
+            System.out.println(url);
 
             try {
                 JSONObject rawData = getData(url);
@@ -307,7 +308,7 @@ public class CrawlerModel {
             } catch (Exception ex) {
                 Logger.getLogger(CrawlerModel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            break;
+//            break;
         }
         return items;
     }
@@ -515,8 +516,9 @@ public class CrawlerModel {
         CrawlerModel.Instance.init();
 //        System.out.println(CrawlerModel.COLOR_ID);
         System.out.println(CrawlerModel.COLOR_ID);
-        List<Item> items = CrawlerModel.Instance.crawlOneCategory("https://teechip.com/shop/women/tank-tops/unisex-tank");
-        CrawlerModel.Instance.pushProductToServer(items, "unisex-tank");
+        List<Item> items = CrawlerModel.Instance.crawlOneCategory("https://teechip.com/shop/women/t-shirts/ladies-tee");
+        
+        System.out.println(items.size());
 
     }
 }

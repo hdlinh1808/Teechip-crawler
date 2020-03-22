@@ -12,6 +12,8 @@ import com.crawler.teechip.entity.CategoryData;
 import com.crawler.teechip.entity.Image;
 import com.crawler.teechip.entity.Item;
 import com.crawler.teechip.entity.LocalProductAttribute;
+import com.crawler.teechip.executortask.CrawlTask;
+import com.crawler.teechip.executortask.PushTask;
 import static com.crawler.teechip.model.CrawlerModel.COLOR_ID;
 import static com.crawler.teechip.model.CrawlerModel.LIMIT;
 import static com.crawler.teechip.model.CrawlerModel.SIZE_ID;
@@ -29,6 +31,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.client.HttpClient;
@@ -41,27 +47,27 @@ import org.json.JSONObject;
  * @author linhhd
  */
 public class CrawlerTaskModel {
+
     private HttpClient client;
     private int limit = 50;
     private String crawlUrl;
     private OAuthConfig config;
     private String category;
     private String newPartPath;
-    
+
     LogPrinter logPrinter;
-    
-    
-    public CrawlerTaskModel(String myUrl, String consumerKey, String consumerSecret, String crawlUrl){
+
+    public CrawlerTaskModel(String myUrl, String consumerKey, String consumerSecret, String crawlUrl) {
         config = new OAuthConfig(myUrl, consumerKey, consumerSecret);
         this.crawlUrl = crawlUrl;
     }
-    
+
     public List<Item> crawlOneCategory(String url) throws URISyntaxException, IOException, JSONException {
         URI uri = new URI(url);
         String path = uri.getPath();
         CrawlerModel.Instance.genCategory(path);
         String groupId = JSoupUtils.getGroupCode();
-        
+
         String[] part = path.split("/");
         String[] newPartPaths = new String[part.length - 2];
         for (int i = 2; i < part.length; i++) {
@@ -70,76 +76,59 @@ public class CrawlerTaskModel {
         newPartPath = String.join(".", newPartPaths);
         newPartPath = String.join(".", newPartPaths);
         category = newPartPaths[newPartPaths.length - 1];
-        
+
         return getData(JSoupUtils.MAIN_URL, path, groupId);
     }
-    
+
     private List<Item> getData(String domain, String path, String groupId) {
         String urlFormat = "%s/rest/retail-products/groups/%s%s?page=%d&limit=%d&recentViewAsShould=true";
         int count = 0;
         List<Item> items = new ArrayList<>();
-        
-        
+
         String detailUrlFormat = JSoupUtils.MAIN_URL + "/campaigns/page/%d/shop/" + newPartPath + "/%s?retailProductCode=%s";
+        List<Thread> tasks = new ArrayList<>();
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
         while (true) {
             String url = String.format(urlFormat, JSoupUtils.MAIN_URL, groupId, path,
                     ++count, LIMIT);
-//            LogPrinterManager.Instance.printInMainFrameLogArea(url);
 
-            try {
-                JSONObject rawData = CrawlerModel.Instance.getData(url);
-                JSONArray retailProducts = rawData.getJSONArray("retailProducts");
-
-                if (retailProducts.length() == 0) {
-                    break;
-                }
-
-                JSONArray jPriceSize = new JSONArray();
-                List<Item> partialItems = new ArrayList<>();
-                for (int i = 0; i < retailProducts.length(); i++) {
-                    JSONObject product = retailProducts.getJSONObject(i);
-                    Item item = CrawlerModel.Instance.getItemData(product);
-                    jPriceSize.put(item.getProductId());
-                    partialItems.add(item);
-//                    String itemUrl = String.format(detailUrlFormat, count, item.getCampaignUrl(), item.getCode());
-//                    System.out.println(itemUrl);
-//                    getDescription(itemUrl);
-
-                }
-
-                jPriceSize = CrawlerModel.Instance.getDataPrice(jPriceSize);
-                for (int i = 0; i < partialItems.size(); i++) {
-                    JSONObject jData = jPriceSize.getJSONObject(i).getJSONObject("data");
-                    Iterator<String> keys = jData.keys();
-                    List<Item.Size> sizes = new ArrayList<>();
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        JSONObject jSize = jData.getJSONObject(key);
-                        int price = jSize.getInt("fees") + jSize.getInt("base");
-                        Item.Size size = new Item.Size(key, price);
-                        sizes.add(size);
-                    }
-                    partialItems.get(i).setSizes(sizes);
-                }
-
-                items.addAll(partialItems);
-
-            } catch (Exception ex) {
-                Logger.getLogger(CrawlerModel.class.getName()).log(Level.SEVERE, null, ex);
+            if (count > 25) {
+                break;
             }
-            break;
+            System.out.println(url);
+
+            Thread thread = new Thread(new CrawlTask(url, items));
+            tasks.add(thread);
+            executor.execute(thread);
+
         }
+
+        awaitTerminationAfterShutdown(executor);
         return items;
     }
-    
-    public void pushProductToServer(List<Item> items) {
-        for (Item item : items) {
-            pushProductToServer(item, category);
-            break;
+
+    public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(3600, TimeUnit.SECONDS)) {
+                threadPool.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            threadPool.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
-    
-    private void pushProductToServer(Item item, String category) {
+
+    public void pushProductToServer(List<Item> items) {
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
+        for (Item item : items) {
+            PushTask task = new PushTask(item, category, this);
+            executor.execute(task);
+        }
+        executor.shutdown();
+    }
+
+    public void pushProductToServer(Item item, String category) {
         Map<String, Object> productInfo = new HashMap<>();
         productInfo.put("name", item.getDesign() + " " + item.getProduct());
         productInfo.put("type", "variable");
@@ -163,8 +152,9 @@ public class CrawlerTaskModel {
         Map<String, Object> response = wooCommerce.create("products", productInfo);
         Integer id = (Integer) response.get("id");
         cloneVariations(item, id);
+        System.out.println(item.getDesign() + " " + item.getProduct() + ": done.");
     }
-    
+
     private void cloneVariations(Item item, int productId) {
         Map<String, Object> variationInfo;
         List<AttributeOption> attributeOptions;

@@ -53,7 +53,8 @@ public class CrawlerController {
         try {
             CrawlerTaskModel task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
             List<Item> items = task.crawlOneCategory(crawlUrl);
-            task.pushProductToServer(items);
+            System.out.println("itemsize: " + items.size());
+//            task.pushProductToServer(items);
         } catch (Exception ex) {
             Logger.getLogger(CrawlerController.class.getName()).log(Level.SEVERE, null, ex);
         }
