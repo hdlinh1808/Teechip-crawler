@@ -53,7 +53,7 @@ public class CrawlerController {
         try {
             CrawlerTaskModel task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
             List<Item> items = task.crawlOneCategory(crawlUrl);
-            task.pushProductToServer(items, crawlUrl);
+            task.pushProductToServer(items);
         } catch (Exception ex) {
             Logger.getLogger(CrawlerController.class.getName()).log(Level.SEVERE, null, ex);
         }

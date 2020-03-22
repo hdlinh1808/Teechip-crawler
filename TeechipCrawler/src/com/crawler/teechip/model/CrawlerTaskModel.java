@@ -132,7 +132,7 @@ public class CrawlerTaskModel {
         return items;
     }
     
-    public void pushProductToServer(List<Item> items, String category) {
+    public void pushProductToServer(List<Item> items) {
         for (Item item : items) {
             pushProductToServer(item, category);
             break;
