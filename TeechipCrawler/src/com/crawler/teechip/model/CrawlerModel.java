@@ -104,7 +104,7 @@ public class CrawlerModel {
         return getData(JSoupUtils.MAIN_URL, path, groupId);
     }
 
-    private void genCategory(String path) {
+    public void genCategory(String path) {
         String[] part = path.split("/");
         WooCommerce wooCommerce = new WooCommerceAPI(config, ApiVersionType.V3);
         List categories = wooCommerce.getAll("products/categories");
