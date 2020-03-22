@@ -65,7 +65,7 @@ public class CrawlerTaskModel {
 //            LogPrinterManager.Instance.printInMainFrameLogArea(url);
 
             try {
-                JSONObject rawData = getData(url);
+                JSONObject rawData = CrawlerModel.Instance.getData(url);
                 JSONArray retailProducts = rawData.getJSONArray("retailProducts");
 
                 if (retailProducts.length() == 0) {
@@ -76,7 +76,7 @@ public class CrawlerTaskModel {
                 List<Item> partialItems = new ArrayList<>();
                 for (int i = 0; i < retailProducts.length(); i++) {
                     JSONObject product = retailProducts.getJSONObject(i);
-                    Item item = getItemData(product);
+                    Item item = CrawlerModel.Instance.getItemData(product);
                     jPriceSize.put(item.getProductId());
                     partialItems.add(item);
 //                    String itemUrl = String.format(detailUrlFormat, count, item.getCampaignUrl(), item.getCode());
@@ -85,7 +85,7 @@ public class CrawlerTaskModel {
 
                 }
 
-                jPriceSize = getDataPrice(jPriceSize);
+                jPriceSize = CrawlerModel.Instance.getDataPrice(jPriceSize);
                 for (int i = 0; i < partialItems.size(); i++) {
                     JSONObject jData = jPriceSize.getJSONObject(i).getJSONObject("data");
                     Iterator<String> keys = jData.keys();

@@ -7,8 +7,13 @@ package com.crawler.teechip.model;
 
 import com.crawler.teachip.common.HttpUtils;
 import com.crawler.teachip.common.JSoupUtils;
+import com.crawler.teechip.entity.Attribute;
+import com.crawler.teechip.entity.AttributeOption;
 import com.crawler.teechip.entity.Category;
+import com.crawler.teechip.entity.CategoryData;
+import com.crawler.teechip.entity.Image;
 import com.crawler.teechip.entity.Item;
+import com.crawler.teechip.entity.LocalProductAttribute;
 import com.icoderman.woocommerce.ApiVersionType;
 import com.icoderman.woocommerce.EndpointBaseType;
 import com.icoderman.woocommerce.WooCommerce;
@@ -307,7 +312,7 @@ public class CrawlerModel {
         return items;
     }
 
-    private Item getItemData(JSONObject rawData) throws JSONException, URISyntaxException {
+    public Item getItemData(JSONObject rawData) throws JSONException, URISyntaxException {
         int price = rawData.getInt("price");
         JSONObject jNames = rawData.getJSONObject("names");
         String product = jNames.getString("product");
@@ -378,7 +383,7 @@ public class CrawlerModel {
         return "";
     }
 
-    private static JSONArray getDataPrice(JSONArray params) throws UnsupportedEncodingException, IOException, JSONException {
+    public JSONArray getDataPrice(JSONArray params) throws UnsupportedEncodingException, IOException, JSONException {
         HttpPost httpPost = new HttpPost("https://teechip.com/rest/retail-products/pricing");
         httpPost.addHeader("content-type", "application/json");
         JSONArray arr = new JSONArray();
@@ -505,143 +510,6 @@ public class CrawlerModel {
         List products = wooCommerce.getAll(EndpointBaseType.PRODUCTS.getValue(), params);
     }
 
-    static class AttributeOption {
-
-        int id;
-        String option;
-
-        public AttributeOption(int id, String option) {
-            this.id = id;
-            this.option = option;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getOption() {
-            return option;
-        }
-
-        public void setOption(String option) {
-            this.option = option;
-        }
-
-    }
-
-    //Multi option        
-    static class LocalProductAttribute {
-
-        int id;
-        List<String> options;
-        boolean visible = true;
-        boolean variation = true;
-
-        public LocalProductAttribute(int id, List<String> options) {
-            this.id = id;
-            this.options = options;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public List<String> getOptions() {
-            return options;
-        }
-
-        public void setOptions(List<String> options) {
-            this.options = options;
-        }
-
-        public boolean isVisible() {
-            return visible;
-        }
-
-        public void setVisible(boolean visible) {
-            this.visible = visible;
-        }
-
-        public boolean isVariation() {
-            return variation;
-        }
-
-        public void setVariation(boolean variation) {
-            this.variation = variation;
-        }
-
-    }
-
-    static class Image implements Serializable {
-
-        String src;
-
-        public Image(String src) {
-            this.src = src;
-        }
-
-        public String getSrc() {
-            return src;
-        }
-
-        public void setSrc(String src) {
-            this.src = src;
-        }
-
-    }
-
-    static class Attribute implements Serializable {
-
-        int id;
-        String option;
-
-        public Attribute(int id, String option) {
-            this.id = id;
-            this.option = option;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getOption() {
-            return option;
-        }
-
-        public void setOption(String option) {
-            this.option = option;
-        }
-
-    }
-
-    public class CategoryData implements Serializable {
-
-        int id;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public CategoryData(int id) {
-            this.id = id;
-        }
-    }
 
     public static void main(String[] args) throws URISyntaxException, IOException, JSONException {
         CrawlerModel.Instance.init();
