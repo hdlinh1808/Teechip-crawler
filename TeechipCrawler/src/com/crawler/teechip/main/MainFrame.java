@@ -217,9 +217,9 @@ public class MainFrame extends javax.swing.JFrame {
         String ck = txtCk.getText();
         String cs = txtCs.getText();
         String myUrl = txtMyUrl.getText();
+        controller = new CrawlerController(this, crawlUrl, ck, cs, myUrl);
         CrawlerModel.Instance.init(myUrl, ck, cs, isInit);
         isInit = true;
-        controller = new CrawlerController(this, crawlUrl, ck, cs, myUrl);
         controller.crawl(crawlUrl, ck, cs, myUrl);
     }
 
