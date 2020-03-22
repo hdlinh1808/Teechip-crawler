@@ -8,6 +8,8 @@ package com.crawler.teechip.main;
 import com.crawler.teechip.callback.LogPrinter;
 import com.crawler.teechip.controller.CrawlerController;
 import com.crawler.teechip.model.CrawlerModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,6 +50,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtCk = new javax.swing.JTextField();
         txtCs = new javax.swing.JTextField();
+        btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,6 +89,13 @@ public class MainFrame extends javax.swing.JFrame {
 
         txtCs.setText("cs_c89f2085df2f1acbb3d87f7e8f9b7495791d3cbd");
 
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -100,7 +110,10 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCrawl)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnCrawl)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancel))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtCategoryUrl, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                                 .addComponent(txtMyUrl))))
@@ -134,7 +147,9 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(txtCs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(btnCrawl)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCrawl)
+                    .addComponent(btnCancel))
                 .addGap(20, 20, 20)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
@@ -151,6 +166,22 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMyUrlActionPerformed
 
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        try {
+            txtLog.append("aaaa\n");
+            txtLog.update(txtLog.getGraphics());
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnCancelActionPerformed
+   
+    public void testFunction(){
+
+    }
+    
+    
+    
     public void crawl() {
         String crawlUrl = txtCategoryUrl.getText();
         String ck = txtCk.getText();
@@ -190,7 +221,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         MainFrame mainFrame = new MainFrame();
-        CrawlerModel.Instance.init();
+//        CrawlerModel.Instance.init();
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -204,6 +235,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCrawl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
