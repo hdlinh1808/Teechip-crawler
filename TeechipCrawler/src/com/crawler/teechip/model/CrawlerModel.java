@@ -354,7 +354,7 @@ public class CrawlerModel {
         //get relate
     }
 
-    private JSONObject getData(String url) throws IOException, JSONException {
+    public JSONObject getData(String url) throws IOException, JSONException {
         HttpGet httpGet = new HttpGet(url);
         HttpResponse httpResponse = client.execute(httpGet);
         String result = HttpUtils.parseResultFromResponseHttpClient(httpResponse);

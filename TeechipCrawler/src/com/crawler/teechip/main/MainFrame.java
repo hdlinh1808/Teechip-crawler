@@ -43,6 +43,10 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         txtMyUrl = new javax.swing.JTextField();
         btnCrawl = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtCk = new javax.swing.JTextField();
+        txtCs = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -55,7 +59,14 @@ public class MainFrame extends javax.swing.JFrame {
         txtLog.setRows(5);
         jScrollPane1.setViewportView(txtLog);
 
-        jLabel2.setText("My api:");
+        jLabel2.setText("My URL:");
+
+        txtMyUrl.setText("http://localhost/duydl/index.php");
+        txtMyUrl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMyUrlActionPerformed(evt);
+            }
+        });
 
         btnCrawl.setText("Crawl");
         btnCrawl.addActionListener(new java.awt.event.ActionListener() {
@@ -63,6 +74,16 @@ public class MainFrame extends javax.swing.JFrame {
                 btnCrawlActionPerformed(evt);
             }
         });
+
+        jLabel3.setText("Consumer secret:");
+        jLabel3.setToolTipText("");
+
+        jLabel4.setText("Consumer key:");
+        jLabel4.setToolTipText("");
+
+        txtCk.setText("ck_6c31e47de04da961391e80048077d86d9288c4b2");
+
+        txtCs.setText("cs_c89f2085df2f1acbb3d87f7e8f9b7495791d3cbd");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -81,7 +102,15 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(btnCrawl)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtCategoryUrl, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
-                                .addComponent(txtMyUrl)))))
+                                .addComponent(txtMyUrl))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCk, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                            .addComponent(txtCs))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -96,8 +125,16 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtMyUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtCk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtCs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(btnCrawl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
@@ -108,6 +145,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnCrawlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrawlActionPerformed
         crawl();
     }//GEN-LAST:event_btnCrawlActionPerformed
+
+    private void txtMyUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMyUrlActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMyUrlActionPerformed
 
     public void crawl() {
         String url = txtCategoryUrl.getText();
@@ -160,8 +201,12 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnCrawl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtCategoryUrl;
+    private javax.swing.JTextField txtCk;
+    private javax.swing.JTextField txtCs;
     private javax.swing.JTextArea txtLog;
     private javax.swing.JTextField txtMyUrl;
     // End of variables declaration//GEN-END:variables
