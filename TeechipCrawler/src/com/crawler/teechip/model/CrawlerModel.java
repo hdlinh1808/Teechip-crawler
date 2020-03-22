@@ -7,6 +7,7 @@ package com.crawler.teechip.model;
 
 import com.crawler.teachip.common.HttpUtils;
 import com.crawler.teachip.common.JSoupUtils;
+import com.crawler.teechip.common.LogPrinterManager;
 import com.crawler.teechip.entity.Attribute;
 import com.crawler.teechip.entity.AttributeOption;
 import com.crawler.teechip.entity.Category;
@@ -136,14 +137,21 @@ public class CrawlerModel {
         return rawName;
     }
 
-    public void init(String url, String ck, String cs, boolean isInit) {
+    public boolean init(String url, String ck, String cs, boolean isInit) {
         if (!isInit) {
-            config = new OAuthConfig(url,
-            ck,
-            cs);
-            initAllAttribute();
-            initAllCategories();
+            try {
+                config = new OAuthConfig(url,
+                        ck,
+                        cs);
+                initAllAttribute();
+                initAllCategories();
+            } catch (Exception ex) {
+                LogPrinterManager.Instance.printInMainFrameLogArea(ex.getMessage());
+                return false;
+            }
         }
+        
+        return true;
 
     }
 
@@ -157,7 +165,7 @@ public class CrawlerModel {
         }
     }
 
-    private void initAllAttribute() {
+    private void initAllAttribute() throws Exception {
         WooCommerce wooCommerce = new WooCommerceAPI(config, ApiVersionType.V3);
         List attrs = wooCommerce.getAll("products/attributes");
         for (Object attr : attrs) {

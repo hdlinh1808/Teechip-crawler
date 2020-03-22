@@ -218,9 +218,13 @@ public class MainFrame extends javax.swing.JFrame {
         String cs = txtCs.getText();
         String myUrl = txtMyUrl.getText();
         controller = new CrawlerController(this, crawlUrl, ck, cs, myUrl);
-        CrawlerModel.Instance.init(myUrl, ck, cs, isInit);
-        isInit = true;
-        controller.crawl(crawlUrl, ck, cs, myUrl);
+        boolean result = CrawlerModel.Instance.init(myUrl, ck, cs, isInit);
+        if (result) {
+            isInit = true;
+            controller.crawl(crawlUrl, ck, cs, myUrl);
+        }else {
+            btnCrawl.setEnabled(true);
+        }
     }
 
     public void enableCrawlButton() {
@@ -262,7 +266,6 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        
         MainFrame mainFrame = new MainFrame();
 
         java.awt.EventQueue.invokeLater(new Runnable() {
