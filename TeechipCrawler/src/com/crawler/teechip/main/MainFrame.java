@@ -8,6 +8,8 @@ package com.crawler.teechip.main;
 import com.crawler.teechip.callback.LogPrinter;
 import com.crawler.teechip.controller.CrawlerController;
 import com.crawler.teechip.model.CrawlerModel;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
@@ -33,13 +35,11 @@ public class MainFrame extends javax.swing.JFrame {
         txtLog.setEditable(false);
         txtLog.setLineWrap(true);
         txtLog.setWrapStyleWord(true);
-//        DefaultCaret caret = (DefaultCaret) txtLog.getCaret(); // ←
-//        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);       // ←
-//
-//        JScrollPane scrollPane = new JScrollPane();
-//        scrollPane.setViewportView(txtLog);
         logPrinter = new LogPrinter(txtLog);
 
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        this.setTitle("Teechip Crawler");
     }
 
     /**
