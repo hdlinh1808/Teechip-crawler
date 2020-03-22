@@ -11,6 +11,7 @@ import com.crawler.teechip.entity.Item;
 import com.crawler.teechip.main.MainFrame;
 import com.crawler.teechip.model.CrawlerModel;
 import static com.crawler.teechip.model.CrawlerModel.client;
+import com.crawler.teechip.model.CrawlerTaskModel;
 import com.icoderman.woocommerce.ApiVersionType;
 import com.icoderman.woocommerce.EndpointBaseType;
 import com.icoderman.woocommerce.WooCommerce;
@@ -50,7 +51,9 @@ public class CrawlerController {
 
     public void crawl(String crawlUrl, String consumerKey, String consumerSecret, String myUrl) {
         try {
-            
+            CrawlerTaskModel task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
+            List<Item> items = task.crawlOneCategory(crawlUrl);
+            task.pushProductToServer(items, crawlUrl);
         } catch (Exception ex) {
             Logger.getLogger(CrawlerController.class.getName()).log(Level.SEVERE, null, ex);
         }

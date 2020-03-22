@@ -6,6 +6,7 @@
 package com.crawler.teechip.model;
 
 import com.crawler.teachip.common.JSoupUtils;
+import com.crawler.teechip.callback.LogPrinter;
 import com.crawler.teechip.entity.AttributeOption;
 import com.crawler.teechip.entity.CategoryData;
 import com.crawler.teechip.entity.Image;
@@ -43,8 +44,11 @@ public class CrawlerTaskModel {
     private HttpClient client;
     private int limit = 50;
     private String crawlUrl;
-    
     private OAuthConfig config;
+    private String category;
+    private String newPartPath;
+    
+    LogPrinter logPrinter;
     
     
     public CrawlerTaskModel(String myUrl, String consumerKey, String consumerSecret, String crawlUrl){
@@ -57,6 +61,16 @@ public class CrawlerTaskModel {
         String path = uri.getPath();
         CrawlerModel.Instance.genCategory(path);
         String groupId = JSoupUtils.getGroupCode();
+        
+        String[] part = path.split("/");
+        String[] newPartPaths = new String[part.length - 2];
+        for (int i = 2; i < part.length; i++) {
+            newPartPaths[i - 2] = part[i];
+        }
+        newPartPath = String.join(".", newPartPaths);
+        newPartPath = String.join(".", newPartPaths);
+        category = newPartPaths[newPartPaths.length - 1];
+        
         return getData(JSoupUtils.MAIN_URL, path, groupId);
     }
     
@@ -64,13 +78,8 @@ public class CrawlerTaskModel {
         String urlFormat = "%s/rest/retail-products/groups/%s%s?page=%d&limit=%d&recentViewAsShould=true";
         int count = 0;
         List<Item> items = new ArrayList<>();
-        String[] part = path.split("/");
-        String[] newPartPaths = new String[part.length - 2];
-        for (int i = 2; i < part.length; i++) {
-            newPartPaths[i - 2] = part[i];
-        }
-
-        String newPartPath = String.join(".", newPartPaths);
+        
+        
         String detailUrlFormat = JSoupUtils.MAIN_URL + "/campaigns/page/%d/shop/" + newPartPath + "/%s?retailProductCode=%s";
         while (true) {
             String url = String.format(urlFormat, JSoupUtils.MAIN_URL, groupId, path,
@@ -137,8 +146,6 @@ public class CrawlerTaskModel {
         productInfo.put("regular_price", item.getPrice() + "");
         productInfo.put("description", "desciption");
         productInfo.put("short_description", "short_desciption");
-//        productInfo.put("sku", item.getProductId());
-//        productInfo.put("id", item.getProductId());
         List<CategoryData> categories = new ArrayList();
         categories.add(new CategoryData(mapCategoryName.get(category)));
         productInfo.put("categories", categories);
@@ -155,7 +162,6 @@ public class CrawlerTaskModel {
         WooCommerce wooCommerce = new WooCommerceAPI(config, ApiVersionType.V3);
         Map<String, Object> response = wooCommerce.create("products", productInfo);
         Integer id = (Integer) response.get("id");
-        System.out.println(id);
         cloneVariations(item, id);
     }
     

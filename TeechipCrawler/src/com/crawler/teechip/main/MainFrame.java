@@ -7,6 +7,7 @@ package com.crawler.teechip.main;
 
 import com.crawler.teechip.callback.LogPrinter;
 import com.crawler.teechip.controller.CrawlerController;
+import com.crawler.teechip.model.CrawlerModel;
 
 /**
  *
@@ -189,6 +190,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         MainFrame mainFrame = new MainFrame();
+        CrawlerModel.Instance.init();
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
