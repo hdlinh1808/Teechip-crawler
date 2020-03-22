@@ -55,7 +55,7 @@ public class CrawlerModel {
     public static final CrawlerModel Instance = new CrawlerModel();
     public static HttpClient client;
     public static int LIMIT = 50;
-    public static String BASE_IMAGEURL = "https://cdn.32pt.com/";
+    public static String BASE_IMAGEURL = "https://cdn.32pt.com";
     public static String COLOR_STRING = "Color";
     public static String SIZE_STRING = "Size";
     public static int COLOR_ID = -1;
@@ -511,14 +511,29 @@ public class CrawlerModel {
         List products = wooCommerce.getAll(EndpointBaseType.PRODUCTS.getValue(), params);
     }
 
+    public static void delete() {
+        WooCommerce wooCommerce = new WooCommerceAPI(config, ApiVersionType.V3);
+        Map<String, String> params = new HashMap<>();
+        params.put("page", "1");
+        params.put("per_page", "100");
+        List<Map<String, Object>> lists = wooCommerce.getAll("products", params);
+        System.out.println(lists.size());
+        params = new HashMap<>();
+        params.put("force", "true");
+        for (Map<String, Object> product : lists) {
+            wooCommerce.delete("products", (int) product.get("id"));
+
+        }
+
+    }
 
     public static void main(String[] args) throws URISyntaxException, IOException, JSONException {
-        CrawlerModel.Instance.init();
+//        CrawlerModel.Instance.init();
+////        System.out.println(CrawlerModel.COLOR_ID);
 //        System.out.println(CrawlerModel.COLOR_ID);
-        System.out.println(CrawlerModel.COLOR_ID);
-        List<Item> items = CrawlerModel.Instance.crawlOneCategory("https://teechip.com/shop/women/t-shirts/ladies-tee");
-        
-        System.out.println(items.size());
+//        List<Item> items = CrawlerModel.Instance.crawlOneCategory("https://teechip.com/shop/women/t-shirts/ladies-tee");
+
+        delete();
 
     }
 }

@@ -5,6 +5,7 @@
  */
 package com.crawler.teechip.executortask;
 
+import com.crawler.teechip.common.LogPrinterManager;
 import com.crawler.teechip.entity.Item;
 import com.crawler.teechip.model.CrawlerModel;
 import java.util.ArrayList;
@@ -23,10 +24,14 @@ public class CrawlTask implements Runnable{
         
         String url;
         List<Item> listAllItem;
+        int page;
+        int count;
 
-        public CrawlTask(String url, List<Item> listAllItem) {
+        public CrawlTask(String url, List<Item> listAllItem, int page, int count) {
             this.url = url;
             this.listAllItem = listAllItem;
+            this.page = page;
+            this.count = count;
         }
 
         @Override
@@ -62,6 +67,7 @@ public class CrawlTask implements Runnable{
                         JSONObject jSize = jData.getJSONObject(key);
                         int price = jSize.getInt("fees") + jSize.getInt("base");
                         Item.Size size = new Item.Size(key, price);
+                        
                         sizes.add(size);
                     }
                     partialItems.get(i).setSizes(sizes);
@@ -70,7 +76,9 @@ public class CrawlTask implements Runnable{
                 synchronized(listAllItem){
                     listAllItem.addAll(partialItems);
                 }
-                System.out.println(url + ": done.");
+                String log = String.format("Crawl page: %d, number element: %d done!\n", page, count);
+                LogPrinterManager.Instance.printInMainFrameLogArea(log);
+//                System.out.println(log);
 
             } catch (Exception ex) {
                 Logger.getLogger(CrawlerModel.class.getName()).log(Level.SEVERE, null, ex);

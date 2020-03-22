@@ -41,22 +41,49 @@ import org.json.JSONObject;
 public class CrawlerController {
 
     private MainFrame frame;
+    CrawlerTaskModel task;
+    Thread thread;
 
-    public CrawlerController(MainFrame frame) {
+    public CrawlerController(MainFrame frame, String crawlUrl, String consumerKey, String consumerSecret, String myUrl) {
         this.frame = frame;
         LogPrinterManager.Instance.setMainFrameLog(frame.getLogPrinter());
-
-        System.out.println(frame.getLogPrinter());
+        task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
     }
 
     public void crawl(String crawlUrl, String consumerKey, String consumerSecret, String myUrl) {
         try {
-            CrawlerTaskModel task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
-            List<Item> items = task.crawlOneCategory(crawlUrl);
-            System.out.println("itemsize: " + items.size());
-//            task.pushProductToServer(items);
+            thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        task = new CrawlerTaskModel(myUrl, consumerKey, consumerSecret, crawlUrl);
+                        LogPrinterManager.Instance.printInMainFrameLogArea("Start crawling...\n");
+                        List<Item> items = task.crawlOneCategory(crawlUrl);
+                        LogPrinterManager.Instance.printInMainFrameLogArea("Crawling done!\n");
+                        LogPrinterManager.Instance.printInMainFrameLogArea("Start pushing to server..\n");
+                        System.out.println("itemsize: " + items.size());
+                        task.pushProductToServer(items);
+                        frame.enableCrawlButton();
+                    } catch (Exception ex) {
+                        
+                    }
+                }
+            };
+            thread.start();
+            
         } catch (Exception ex) {
             Logger.getLogger(CrawlerController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void shutDown() {
+        if(thread != null){
+            thread.interrupt();
+        }
+        
+        task.shutdownNow();
+        frame.cancelDone();
+    }
+    
+
 }

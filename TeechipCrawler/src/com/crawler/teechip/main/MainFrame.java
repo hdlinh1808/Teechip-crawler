@@ -10,6 +10,8 @@ import com.crawler.teechip.controller.CrawlerController;
 import com.crawler.teechip.model.CrawlerModel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JScrollPane;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -17,16 +19,25 @@ import java.util.logging.Logger;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    private CrawlerController controller;
     private LogPrinter logPrinter;
+    CrawlerController controller;
+    public static boolean tapCancel = false;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+
         initComponents();
+        txtLog.setEditable(false);
+        txtLog.setLineWrap(true);
+        txtLog.setWrapStyleWord(true);
+//        DefaultCaret caret = (DefaultCaret) txtLog.getCaret(); // ←
+//        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);       // ←
+//
+//        JScrollPane scrollPane = new JScrollPane();
+//        scrollPane.setViewportView(txtLog);
         logPrinter = new LogPrinter(txtLog);
-        controller = new CrawlerController(this);
 
     }
 
@@ -51,6 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
         txtCk = new javax.swing.JTextField();
         txtCs = new javax.swing.JTextField();
         btnCancel = new javax.swing.JButton();
+        btnClearLog = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,6 +108,13 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        btnClearLog.setText("Clear log");
+        btnClearLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearLogActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -113,7 +132,9 @@ public class MainFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnCrawl)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCancel))
+                                .addComponent(btnCancel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnClearLog))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtCategoryUrl, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                                 .addComponent(txtMyUrl))))
@@ -149,7 +170,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrawl)
-                    .addComponent(btnCancel))
+                    .addComponent(btnCancel)
+                    .addComponent(btnClearLog))
                 .addGap(20, 20, 20)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
@@ -159,7 +181,12 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrawlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrawlActionPerformed
+
+        txtLog.update(txtLog.getGraphics());
+        btnCrawl.setEnabled(false);
+        btnCrawl.update(btnCrawl.getGraphics());
         crawl();
+
     }//GEN-LAST:event_btnCrawlActionPerformed
 
     private void txtMyUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMyUrlActionPerformed
@@ -167,28 +194,40 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_txtMyUrlActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        try {
-            txtLog.append("aaaa\n");
-            txtLog.update(txtLog.getGraphics());
-            Thread.sleep(3000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        txtLog.append("Canceling...\n");
+        txtLog.update(txtLog.getGraphics());
+        controller.shutDown();
+
     }//GEN-LAST:event_btnCancelActionPerformed
-   
-    public void testFunction(){
+
+    private void btnClearLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearLogActionPerformed
+        txtLog.setText("");
+        txtLog.update(txtLog.getGraphics());
+    }//GEN-LAST:event_btnClearLogActionPerformed
+
+    public void testFunction() {
 
     }
-    
-    
-    
+
     public void crawl() {
+        tapCancel = false;
         String crawlUrl = txtCategoryUrl.getText();
         String ck = txtCk.getText();
         String cs = txtCs.getText();
         String myUrl = txtMyUrl.getText();
-        
+        controller = new CrawlerController(this, crawlUrl, ck, cs, myUrl);
         controller.crawl(crawlUrl, ck, cs, myUrl);
+    }
+
+    public void enableCrawlButton() {
+        btnCrawl.setEnabled(true);
+    }
+
+    public void cancelDone() {
+        btnCrawl.setEnabled(true);
+        txtLog.append("Cancel done!\n");
+        txtLog.update(txtLog.getGraphics());
     }
 
     /**
@@ -220,8 +259,8 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        CrawlerModel.Instance.init();
         MainFrame mainFrame = new MainFrame();
-//        CrawlerModel.Instance.init();
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -236,6 +275,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnClearLog;
     private javax.swing.JButton btnCrawl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

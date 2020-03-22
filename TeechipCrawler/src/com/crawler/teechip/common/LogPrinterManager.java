@@ -6,6 +6,7 @@
 package com.crawler.teechip.common;
 
 import com.crawler.teechip.callback.LogPrinter;
+import com.crawler.teechip.main.MainFrame;
 
 /**
  *
@@ -24,6 +25,9 @@ public class LogPrinterManager {
     }
     
     public void printInMainFrameLogArea(String message){
-        mainFrameLog.printLog(message);
+//        if(!MainFrame.tapCancel){
+            mainFrameLog.printLog(message);
+//        }
+        
     }
 }
