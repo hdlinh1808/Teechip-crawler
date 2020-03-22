@@ -22,6 +22,7 @@ public class MainFrame extends javax.swing.JFrame {
     private LogPrinter logPrinter;
     CrawlerController controller;
     public static boolean tapCancel = false;
+    public static boolean isInit = false;
 
     /**
      * Creates new form MainFrame
@@ -216,6 +217,8 @@ public class MainFrame extends javax.swing.JFrame {
         String ck = txtCk.getText();
         String cs = txtCs.getText();
         String myUrl = txtMyUrl.getText();
+        CrawlerModel.Instance.init(myUrl, ck, cs, isInit);
+        isInit = true;
         controller = new CrawlerController(this, crawlUrl, ck, cs, myUrl);
         controller.crawl(crawlUrl, ck, cs, myUrl);
     }
@@ -259,7 +262,7 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        CrawlerModel.Instance.init();
+        
         MainFrame mainFrame = new MainFrame();
 
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -62,9 +62,7 @@ public class CrawlerModel {
     public static int SIZE_ID = -1;
     public static Map<String, Integer> mapCategoryName = new HashMap<>();
 
-    public static OAuthConfig config = new OAuthConfig("http://localhost/duydl/index.php",
-            "ck_6c31e47de04da961391e80048077d86d9288c4b2",
-            "cs_c89f2085df2f1acbb3d87f7e8f9b7495791d3cbd");
+    public static OAuthConfig config;
 
     private CrawlerModel() {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15 * 1000).build();//time out 10s
@@ -138,9 +136,15 @@ public class CrawlerModel {
         return rawName;
     }
 
-    public void init() {
-        initAllAttribute();
-        initAllCategories();
+    public void init(String url, String ck, String cs, boolean isInit) {
+        if (!isInit) {
+            config = new OAuthConfig(url,
+            ck,
+            cs);
+            initAllAttribute();
+            initAllCategories();
+        }
+
     }
 
     public void initAllCategories() {
